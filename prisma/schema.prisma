@@ -10,8 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ViewedTx {
+model AccountBalance {
   id Int @id @unique @default(autoincrement())
+  pubkey String
   account String
-  hash String
+  amount String
 }
