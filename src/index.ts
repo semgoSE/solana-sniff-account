@@ -64,7 +64,7 @@ const main = async () => {
     }
 
     interval();
-    setInterval(() => interval(), 1*60*1000);
+    setInterval(() => interval(), 10*60*1000);
 }
 
 main();
