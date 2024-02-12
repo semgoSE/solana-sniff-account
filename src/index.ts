@@ -21,12 +21,19 @@ const main = async () => {
     const tg = new Telegraf(process.env.TG_KEY);
     const prisma = new PrismaClient();
     const connection = new Connection(process.env.RPC);
-
+    let countAccounts = 0;
+    
     const interval = async () => {
         let accountsFile = fs.readFileSync(__dirname + "/../accounts.json", {
             encoding: "utf8",
         });
         let json: { accounts: Account[] } = JSON.parse(accountsFile);
+        
+        if (json.accounts.length != countAccounts) {
+            await tg.telegram.sendMessage(chatId, `Изменилось кол-во аккаунтов ${countAccounts}`);
+        }
+
+        countAccounts = json.accounts.length;
         for(const account of json.accounts) {
             let tokens = await connection.getParsedTokenAccountsByOwner(new PublicKey(account.address), { programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") })
             let amounts = tokens.value.map(e => ({ ...e.account.data.parsed.info, pubkey: e.pubkey }));
@@ -65,6 +72,7 @@ const main = async () => {
 
     interval();
     setInterval(() => interval(), 10*60*1000);
+    await tg.telegram.sendMessage(chatId, `Бот по отслеживанию запущен, кол-во аккаунтов ${countAccounts}`);
 }
 
 main();
