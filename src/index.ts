@@ -30,6 +30,7 @@ const main = async () => {
         let json: { accounts: Account[] } = JSON.parse(accountsFile);
         
         if (json.accounts.length != countAccounts) {
+            countAccounts = json.accounts.length;
             await tg.telegram.sendMessage(chatId, `Изменилось кол-во аккаунтов ${countAccounts}`);
         }
 
